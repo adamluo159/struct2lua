@@ -2,6 +2,7 @@ package struct2lua
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 )
@@ -67,12 +68,12 @@ func toLuaObject(layer int, k *reflect.StructField, v reflect.Value) string {
 	return result
 }
 
-func ToLuaConfig(obj interface{}) string {
+func ToLuaConfig(fileName string, obj interface{}) bool {
 	k := reflect.TypeOf(obj)
 	v := reflect.ValueOf(obj)
 	if v.Kind() != reflect.Struct {
 		fmt.Println("this data is not struct!!")
-		return "false"
+		return false
 	}
 
 	layer := 0
@@ -83,5 +84,14 @@ func ToLuaConfig(obj interface{}) string {
 		head += toLuaObject(layer+1, &k1, v.Field(i)) + ",\n"
 	}
 	head += spaceLayer(layer) + "}"
-	return head
+
+	f, err := os.Create(fileName + ".lua")
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	defer f.Close()
+	f.WriteString(head)
+
+	return true
 }

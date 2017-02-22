@@ -1,9 +1,6 @@
 package struct2lua
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 type CWD struct {
 	A string
@@ -31,6 +28,8 @@ func TestToLuaConfig(t *testing.T) {
 		ID: 1,
 		IP: "192.168.1.1",
 	}
-	result := ToLuaConfig(g)
-	fmt.Println(result)
+	sucess := ToLuaConfig("testLua", g)
+	if sucess == false {
+		t.Error("test TestToLuaConfig fail~")
+	}
 }
