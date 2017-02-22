@@ -6,20 +6,6 @@ import (
 	"strconv"
 )
 
-type CWD struct {
-	A string
-	B int
-	C []int
-	D []string
-	E bool
-}
-
-type Log struct {
-	CW CWD
-	ID int
-	IP string
-}
-
 func spaceLayer(layer int) string {
 	var result string = ""
 	for i := 0; i < layer; i++ {
@@ -99,19 +85,3 @@ func ToLuaConfig(obj interface{}) string {
 	head += spaceLayer(layer) + "}"
 	return head
 }
-
-//func main() {
-//	logsrv := Log{
-//		CW: CWD{
-//			A: "aaaaa",
-//			B: 123,
-//			C: []int{1, 2, 3},
-//			D: []string{"dfdfdfddf", "5", "6"},
-//			E: true,
-//		},
-//		ID: 1,
-//		IP: "192.168.1.1",
-//	}
-//	result := ToLuaConfig(logsrv)
-//	fmt.Println(result)
-//}
