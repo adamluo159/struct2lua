@@ -55,10 +55,10 @@ func TestToLuaConfig(t *testing.T) {
 	submap[0] = 1
 	g.CW["sub"] = submap
 
-	sucess := ToLuaObject(0, g)
+	sucess := ToLuaConfig("testlua", g)
 	fmt.Println(sucess)
 
-	if sucess == "" {
+	if sucess == false {
 		t.Error("test TestToLuaConfig fail~")
 	}
 }

@@ -33,7 +33,7 @@ func ToLuaObject(layer int, i interface{}) string {
 			result += "{"
 		}
 		if layer == 0 {
-			split = ""
+			split = "\n"
 		}
 
 		prefix := "\n" + spaceLayer(layer)
@@ -91,22 +91,7 @@ func ToLuaObject(layer int, i interface{}) string {
 }
 
 func ToLuaConfig(fileName string, obj interface{}) bool {
-	k := reflect.TypeOf(obj)
-	v := reflect.ValueOf(obj)
-	if v.Kind() != reflect.Struct {
-		fmt.Println("this data is not struct!!")
-		return false
-	}
-
-	layer := 0
-	head := spaceLayer(layer) + k.Name() + "= {\n"
-
-	for i := 0; i < k.NumField(); i++ {
-		//k1 := k.Field(i)
-		//head += ToLuaObject(layer+1, &k1, v.Field(i)) + ",\n"
-	}
-	head += spaceLayer(layer) + "}"
-
+	head := ToLuaObject(0, obj)
 	f, err := os.Create(fileName + ".lua")
 	if err != nil {
 		fmt.Println(err.Error())
