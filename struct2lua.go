@@ -15,35 +15,48 @@ func spaceLayer(layer int) string {
 	return result
 }
 
-func toLuaObject(layer int, k *reflect.StructField, v reflect.Value) string {
+func ToLuaObject(layer int, i interface{}) string {
 	var result string = ""
 
-	var kName string = spaceLayer(layer)
-	if k != nil {
-		kName = kName + k.Name + " = "
-	}
+	fmt.Println(i)
+	k := reflect.TypeOf(i)
+	v := reflect.ValueOf(i)
 
+	var kName string = ""
 	switch v.Kind() {
 	case reflect.Struct:
-		result += kName + "{"
-		prefix := "\n"
-		for i := 0; i < v.NumField(); i++ {
-			subK := k.Type.Field(i)
-			result += prefix + toLuaObject(layer+1, &subK, v.Field(i))
-			prefix = ",\n"
+		var split = ""
+		if v.NumField() > 1 {
+			split = ","
 		}
-		result += "\n" + spaceLayer(layer) + "}"
+		if layer > 0 {
+			result += "{"
+		}
+		if layer == 0 {
+			split = ""
+		}
+
+		prefix := "\n" + spaceLayer(layer)
+
+		for i := 0; i < v.NumField(); i++ {
+			if v.Field(i).CanInterface() == false {
+				break
+			}
+			keyName := k.Field(i).Name
+			subV := v.Field(i).Interface()
+			result += prefix + keyName + " = " + ToLuaObject(layer+1, subV) + split
+
+		}
+		if layer > 0 {
+			result += "\n" + spaceLayer(layer-1) + "}"
+		}
 
 	case reflect.Slice:
-		result += kName + "{"
-		prefix := "\n"
-
+		result = "{\n"
 		for i := 0; i < v.Len(); i++ {
-			result += prefix + toLuaObject(layer+1, nil, v.Index(i))
-			prefix = ",\n"
+			result += spaceLayer(layer) + ToLuaObject(layer+1, v.Index(i).Interface()) + ",\n"
 		}
-		result += "\n" + spaceLayer(layer) + "}"
-
+		result += spaceLayer(layer-1) + "}"
 	case reflect.String:
 		s := v.String()
 		if s == "" {
@@ -60,6 +73,15 @@ func toLuaObject(layer int, k *reflect.StructField, v reflect.Value) string {
 	case reflect.Bool:
 		var b bool = v.Bool()
 		result = kName + strconv.FormatBool(b)
+	case reflect.Map:
+		result = "{\n"
+		for _, vmap := range v.MapKeys() {
+			i := v.MapIndex(vmap).Interface()
+			result += spaceLayer(layer) + vmap.String() + " = "
+			result += ToLuaObject(layer+1, i) + ",\n"
+
+		}
+		result += spaceLayer(layer-1) + "}"
 
 	default:
 		result = "nil"
@@ -80,8 +102,8 @@ func ToLuaConfig(fileName string, obj interface{}) bool {
 	head := spaceLayer(layer) + k.Name() + "= {\n"
 
 	for i := 0; i < k.NumField(); i++ {
-		k1 := k.Field(i)
-		head += toLuaObject(layer+1, &k1, v.Field(i)) + ",\n"
+		//k1 := k.Field(i)
+		//head += ToLuaObject(layer+1, &k1, v.Field(i)) + ",\n"
 	}
 	head += spaceLayer(layer) + "}"
 
