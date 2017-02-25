@@ -130,13 +130,11 @@ func ToLuaObject(layer int, i interface{}) string {
 	return result
 }
 
-func ToLuaConfig(fileName string, Id int, obj interface{}) bool {
-	idStr := strconv.Itoa(Id)
-
+func ToLuaConfig(dir string, fileName string, obj interface{}) bool {
 	head := fileName + " = "
 	head += ToLuaObject(1, obj)
-	fmt.Println(head)
-	f, err := os.Create(fileName + idStr + ".lua")
+
+	f, err := os.Create(dir + fileName + ".lua")
 	if err != nil {
 		fmt.Println(err.Error())
 		return false
