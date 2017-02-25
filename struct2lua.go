@@ -15,6 +15,35 @@ func spaceLayer(layer int) string {
 	return result
 }
 
+func StructAndStruct(layer int, k reflect.StructField, v reflect.Value) string {
+	var result string = ""
+	kName := k.Name + " = "
+
+	switch v.Kind() {
+	case reflect.String:
+		s := v.String()
+		if s == "" {
+			result = kName + "nil"
+		} else {
+			result = kName + "\"" + s + "\""
+		}
+
+	case reflect.Int:
+		vInt := (int)(v.Int())
+		str := strconv.Itoa(vInt)
+		result = kName + str
+
+	case reflect.Bool:
+		var b bool = v.Bool()
+		result = kName + strconv.FormatBool(b)
+	default:
+		result = "nil"
+	}
+
+	return result
+
+}
+
 func ToLuaObject(layer int, i interface{}) string {
 	var result string = ""
 
@@ -39,13 +68,24 @@ func ToLuaObject(layer int, i interface{}) string {
 		prefix := "\n" + spaceLayer(layer)
 
 		for i := 0; i < v.NumField(); i++ {
-			if v.Field(i).CanInterface() == false {
-				break
-			}
-			keyName := k.Field(i).Name
-			subV := v.Field(i).Interface()
-			result += prefix + keyName + " = " + ToLuaObject(layer+1, subV) + split
 
+			keyName := k.Field(i).Name
+			if v.Field(i).Kind() == reflect.Struct {
+				result += prefix + keyName + " = {"
+				subPrefix := "\n" + spaceLayer(layer+1)
+				for s := 0; s < v.Field(i).NumField(); s++ {
+					ssk := k.Field(i).Type.Field(s)
+					ssv := v.Field(i).Field(s)
+					result += subPrefix + StructAndStruct(layer+1, ssk, ssv) + ","
+
+				}
+				result += prefix + "},"
+				fmt.Println("susususussu", result)
+			} else {
+				subV := v.Field(i).Interface()
+				result += prefix + keyName + " = " + ToLuaObject(layer+1, subV) + split
+
+			}
 		}
 		if layer > 0 {
 			result += "\n" + spaceLayer(layer-1) + "}"
@@ -95,6 +135,7 @@ func ToLuaConfig(fileName string, Id int, obj interface{}) bool {
 
 	head := fileName + " = "
 	head += ToLuaObject(1, obj)
+	fmt.Println(head)
 	f, err := os.Create(fileName + idStr + ".lua")
 	if err != nil {
 		fmt.Println(err.Error())

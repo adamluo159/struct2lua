@@ -8,7 +8,7 @@ import (
 type T struct {
 	A string
 	B int
-	//C []int
+	C []int
 	//D []string
 	E bool
 }
@@ -28,7 +28,7 @@ func TestToLuaConfig(t *testing.T) {
 		t: T{
 			A: "aaaaa",
 			B: 123,
-			//C: []int{1, 2, 3},
+			C: []int{1, 2, 3},
 			//D: []string{"dfdfdfddf", "5", "6"},
 			E: true,
 		},
