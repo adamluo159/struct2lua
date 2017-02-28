@@ -1,9 +1,6 @@
 package struct2lua
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 type T struct {
 	A string
@@ -56,7 +53,6 @@ func TestToLuaConfig(t *testing.T) {
 	g.CW["sub"] = submap
 
 	sucess := ToLuaConfig("", "testlua", g)
-	fmt.Println(sucess)
 
 	if sucess == false {
 		t.Error("test TestToLuaConfig fail~")

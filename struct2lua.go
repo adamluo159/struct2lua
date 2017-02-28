@@ -47,7 +47,6 @@ func StructAndStruct(layer int, k reflect.StructField, v reflect.Value) string {
 func ToLuaObject(layer int, i interface{}) string {
 	var result string = ""
 
-	fmt.Println(i)
 	k := reflect.TypeOf(i)
 	v := reflect.ValueOf(i)
 
@@ -80,7 +79,6 @@ func ToLuaObject(layer int, i interface{}) string {
 
 				}
 				result += prefix + "},"
-				fmt.Println("susususussu", result)
 			} else {
 				subV := v.Field(i).Interface()
 				result += prefix + keyName + " = " + ToLuaObject(layer+1, subV) + split
