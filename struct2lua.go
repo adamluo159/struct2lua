@@ -128,8 +128,10 @@ func ToLuaObject(layer int, i interface{}) string {
 	return result
 }
 
-func ToLuaConfig(dir string, fileName string, obj interface{}) bool {
-	head := fileName + " = "
+func ToLuaConfig(dir string, fileName string, obj interface{}, Head interface{}) bool {
+	head := ToLuaObject(0, Head)
+
+	head += fileName + " = "
 	head += ToLuaObject(1, obj)
 
 	f, err := os.Create(dir + fileName + ".lua")

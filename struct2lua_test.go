@@ -20,6 +20,12 @@ type LUA struct {
 	t  T
 }
 
+type Ld struct {
+	NET_TIMEOUT_MSEC  int
+	NET_MAX_CONNETION int
+	StartService      []int
+}
+
 func TestToLuaConfig(t *testing.T) {
 	g := LUA{
 		t: T{
@@ -52,9 +58,16 @@ func TestToLuaConfig(t *testing.T) {
 	submap[0] = 1
 	g.CW["sub"] = submap
 
-	sucess := ToLuaConfig("", "testlua", g)
+	lst := Ld{
+		StartService:      []int{0, 1, 3},
+		NET_TIMEOUT_MSEC:  100,
+		NET_MAX_CONNETION: 300,
+	}
+
+	sucess := ToLuaConfig("", "testlua", g, lst)
 
 	if sucess == false {
 		t.Error("test TestToLuaConfig fail~")
 	}
+
 }
