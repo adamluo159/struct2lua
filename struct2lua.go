@@ -23,7 +23,7 @@ func StructAndStruct(layer int, k reflect.StructField, v reflect.Value) string {
 	case reflect.String:
 		s := v.String()
 		if s == "" {
-			result = kName + "nil"
+			result = kName + ""
 		} else {
 			result = kName + "\"" + s + "\""
 		}
@@ -97,11 +97,7 @@ func ToLuaObject(layer int, i interface{}) string {
 		result += spaceLayer(layer-1) + "}"
 	case reflect.String:
 		s := v.String()
-		if s == "" {
-			result = kName + "nil"
-		} else {
-			result = kName + "\"" + s + "\""
-		}
+		result = kName + "\"" + s + "\""
 
 	case reflect.Int:
 		vInt := (int)(v.Int())
@@ -122,6 +118,7 @@ func ToLuaObject(layer int, i interface{}) string {
 		result += spaceLayer(layer-1) + "}"
 
 	default:
+		fmt.Println("reflect:", v.Kind(), k.Kind(), k.Name())
 		result = "nil"
 	}
 
