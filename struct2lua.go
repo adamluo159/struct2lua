@@ -22,12 +22,7 @@ func StructAndStruct(layer int, k reflect.StructField, v reflect.Value) string {
 	switch v.Kind() {
 	case reflect.String:
 		s := v.String()
-		if s == "" {
-			result = kName + ""
-		} else {
-			result = kName + "\"" + s + "\""
-		}
-
+		result = kName + "\"" + s + "\""
 	case reflect.Int:
 		vInt := (int)(v.Int())
 		str := strconv.Itoa(vInt)
@@ -98,7 +93,6 @@ func ToLuaObject(layer int, i interface{}) string {
 	case reflect.String:
 		s := v.String()
 		result = kName + "\"" + s + "\""
-
 	case reflect.Int:
 		vInt := (int)(v.Int())
 		str := strconv.Itoa(vInt)
@@ -113,23 +107,26 @@ func ToLuaObject(layer int, i interface{}) string {
 			i := v.MapIndex(vmap).Interface()
 			result += spaceLayer(layer) + vmap.String() + " = "
 			result += ToLuaObject(layer+1, i) + ",\n"
-
 		}
 		result += spaceLayer(layer-1) + "}"
 
 	default:
-		fmt.Println("reflect:", v.Kind(), k.Kind(), k.Name())
 		result = "nil"
 	}
 
 	return result
 }
 
-func ToLuaConfig(dir string, fileName string, obj interface{}, Head interface{}) bool {
+func ToLuaConfig(dir string, objectHead string, obj interface{}, Head interface{}, ID int) bool {
 	head := ToLuaObject(0, Head)
 
-	head += fileName + " = "
+	head += objectHead + " = "
 	head += ToLuaObject(1, obj)
+
+	fileName := objectHead
+	if ID > 0 {
+		fileName += strconv.Itoa(ID)
+	}
 
 	f, err := os.Create(dir + fileName + ".lua")
 	if err != nil {
