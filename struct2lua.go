@@ -97,7 +97,11 @@ func ToLuaObject(layer int, i interface{}) string {
 		vInt := (int)(v.Int())
 		str := strconv.Itoa(vInt)
 		result = kName + str
-
+	case reflect.Int64:
+		vInt := v.Int()
+		//str := strconv.AppendQuoteToASCII(
+		str := strconv.FormatInt(vInt, 10)
+		result = kName + str
 	case reflect.Bool:
 		var b bool = v.Bool()
 		result = kName + strconv.FormatBool(b)
