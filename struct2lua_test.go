@@ -35,14 +35,8 @@ func TestToLuaConfig(t *testing.T) {
 			//D: []string{"dfdfdfddf", "5", "6"},
 			E: true,
 		},
-		//		ID: 1,
-		//IP: "192.168.1.1",
 		CW: make(map[string]interface{}),
 	}
-
-	//d := R{
-	//	F: "luoluoj",
-	//}
 
 	g.CW["aaa"] = R{
 		F: "a is a",
@@ -58,13 +52,26 @@ func TestToLuaConfig(t *testing.T) {
 	submap[0] = 1
 	g.CW["sub"] = submap
 
+	//array := []R{
+	//	{
+	//		F: "aaaaa",
+	//	},
+	//	{
+	//		F: "ccccc",
+	//	},
+	//}
+	array := make([]R, 1)
+	array[0] = R{F: "ccwwr"}
+
+	g.CW["wwww"] = array
+
 	lst := Ld{
 		StartService:      []int{0, 1, 3},
 		NET_TIMEOUT_MSEC:  100,
 		NET_MAX_CONNETION: 300,
 	}
 
-	sucess := ToLuaConfig("", "testlua", g, lst)
+	sucess := ToLuaConfig("", "testlua", g, lst, 1)
 
 	if sucess == false {
 		t.Error("test TestToLuaConfig fail~")
